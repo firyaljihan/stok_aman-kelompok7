@@ -1,0 +1,7 @@
+services:
+  stokaman:
+    image: haurafiryal/stokaman:latest
+    container_name: stokaman-app
+    ports:
+      - "8081:80"
+    restart: unless-stopped
