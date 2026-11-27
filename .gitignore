@@ -1,0 +1,18 @@
+# Environment & secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# PHP / Composer dependencies
+/vendor/
+
+# IDE / OS temporary files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Jenkins / build artifacts lokal 
+*.log
