@@ -24,16 +24,16 @@ pipeline {
 
         stage('Build Image') {
             steps {
-                sh """
-                    docker build -t ${IMAGE}:${BUILD_NUMBER} -t ${IMAGE}:latest .
+                bat """
+                    docker build -t %IMAGE%:%BUILD_NUMBER% -t %IMAGE%:latest .
                 """
             }
         }
 
         stage('Security Scan (Trivy)') {
             steps {
-                sh """
-                    trivy image --exit-code 0 --severity HIGH,CRITICAL ${IMAGE}:${BUILD_NUMBER}
+                bat """
+                    trivy image --exit-code 0 --severity HIGH,CRITICAL %IMAGE%:%BUILD_NUMBER%
                 """
             }
         }
@@ -45,10 +45,10 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
-                    sh """
-                        echo "\$DOCKER_PASS" | docker login -u "\$DOCKER_USER" --password-stdin
-                        docker push ${IMAGE}:${BUILD_NUMBER}
-                        docker push ${IMAGE}:latest
+                    bat """
+                        echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
+                        docker push %IMAGE%:%BUILD_NUMBER%
+                        docker push %IMAGE%:latest
                     """
                 }
             }
@@ -56,7 +56,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh """
+                bat """
                     docker compose up -d --pull always
                 """
             }
@@ -64,7 +64,7 @@ pipeline {
 
         stage('Verify') {
             steps {
-                sh """
+                bat """
                     docker compose ps
                 """
             }
@@ -73,7 +73,7 @@ pipeline {
 
     post {
         always {
-            sh "docker logout || true"
+            bat "docker logout || exit 0"
         }
         success {
             echo "Pipeline StokAman build #${BUILD_NUMBER} berhasil!"
