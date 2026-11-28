@@ -1,10 +1,16 @@
-FROM php:8.2-apache
+FROM php:8.2-cli-alpine
+
+RUN apk add --no-cache \
+    libpq-dev \
+    oniguruma-dev \
+    && docker-php-ext-install pdo pdo_mysql
 
 WORKDIR /var/www/html
 
-COPY . /var/www/html/
+COPY src/ ./src/
+COPY database/ ./database/
+COPY tests/ ./tests/
 
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+EXPOSE 8000
 
-EXPOSE 80
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "src/Http"]

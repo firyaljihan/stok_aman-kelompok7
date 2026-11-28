@@ -1,7 +1,40 @@
 services:
-  stokaman:
-    image: haurafiryal/stokaman:latest
-    container_name: stokaman-app
-    ports:
-      - "8081:80"
+  db:
+    image: mysql:8.0
+    container_name: stokaman-db
     restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_DATABASE:-stokaman}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - stokaman_db_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DB_PASSWORD:-rootpassword}"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stokaman-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-stokaman}
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-rootpassword}
+    ports:
+      - "8000:8000"
+
+volumes:
+  stokaman_db_data:
