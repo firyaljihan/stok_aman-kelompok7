@@ -167,9 +167,9 @@ $suppliers = $pdo->query('SELECT id, name, phone, address FROM suppliers ORDER B
                 <h3>CRUD Pemasok (Supplier)</h3>
                 <form method="POST" class="inline-form">
                     <input type="hidden" name="action" value="create_supplier">
-                    <input type="text" name="name" placeholder="Nama pemasok" required>
-                    <input type="text" name="phone" placeholder="No. HP">
-                    <input type="text" name="address" placeholder="Alamat">
+                    <input type="text" name="nama" placeholder="Nama Toko" required>
+                    <input type="text" name="e-commerce" placeholder="E-commerce">
+                    <input type="text" name="link" placeholder="Link">
                     <button type="submit" class="btn-add">Tambah</button>
                 </form>
 
