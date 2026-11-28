@@ -4,6 +4,7 @@ pipeline {
     environment {
         IMAGE = 'haurafiryal/stokaman'
         DOCKER_CREDENTIALS_ID = 'stokaman-dockerhub-credentials'
+        TRIVY_BIN = 'C:\\Users\\FAM COMPUTINDO\\AppData\\Local\\Microsoft\\WinGet\\Packages\\AquaSecurity.Trivy_Microsoft.Winget.Source_8wekyb3d8bbwe\\trivy.exe'
     }
 
     options {
@@ -33,7 +34,7 @@ pipeline {
         stage('Security Scan (Trivy)') {
             steps {
                 bat """
-                    trivy image --exit-code 0 --severity HIGH,CRITICAL %IMAGE%:%BUILD_NUMBER%
+                    "%TRIVY_BIN%" image --exit-code 0 --severity HIGH,CRITICAL %IMAGE%:%BUILD_NUMBER%
                 """
             }
         }
@@ -57,7 +58,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 bat """
-                    docker compose up -d --pull always
+                    docker compose pull app
+                    docker compose up -d --remove-orphans
                 """
             }
         }

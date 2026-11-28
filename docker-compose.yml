@@ -19,9 +19,7 @@ services:
       retries: 15
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: haurafiryal/stokaman:latest
     container_name: stokaman-app
     restart: unless-stopped
     depends_on:
