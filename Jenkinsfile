@@ -26,6 +26,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 bat """
+                    set DOCKER_BUILDKIT=0
                     docker build -t %IMAGE%:%BUILD_NUMBER% -t %IMAGE%:latest .
                 """
             }
